@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -25,11 +26,12 @@ public class Task035Test {
     }
 
     private String readData() throws Exception {
-        final InputStream stream = getClass().getResourceAsStream("/task035/data.json");
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        final StringBuilder data = new StringBuilder();
-        reader.lines().forEach(data::append);
-        return data.toString();
+        return new BufferedReader(
+                new InputStreamReader(
+                        getClass()
+                                .getResourceAsStream("/task035/data.json")))
+                .lines()
+                .collect(Collectors.joining());
     }
 
     @Test
@@ -65,8 +67,12 @@ public class Task035Test {
 
     @Test
     public void readWithGson() throws Exception {
-        final GsonBuilder builder = new GsonBuilder();
-        final Person person = instance.readWithGson(builder, readData());
+
+        final Person person = instance.readWithGson(
+                new GsonBuilder(),
+                readData()
+        );
+
         assertNotNull("JSON was not parsed", person);
         assertEquals("Incorrect JSON parsing",
                 10,
